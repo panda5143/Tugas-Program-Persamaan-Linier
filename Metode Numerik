@@ -1,15 +1,8 @@
 import numpy as np
 
+
 def get_matriks_A(dimensi1):
-  """
-  Fungsi untuk meminta input pengguna untuk matriks koefisien A.
 
-  Args:
-    dimension: Dimensi matriks (misalnya 3, 4).
-
-  Returns:
-    Matriks NumPy yang berisi nilai-nilai koefisien A.
-  """
   A = []
   for i in range(dimensi1):
     row = []
@@ -19,32 +12,18 @@ def get_matriks_A(dimensi1):
     A.append(row)
   return np.array(A)
 
+
 def get_matriks_B(dimensi1):
-  """
-  Fungsi untuk meminta input pengguna untuk vektor hasil B.
 
-  Args:
-    dimension: Dimensi vektor (misalnya 3, 4).
-
-  Returns:
-    Vektor NumPy yang berisi nilai-nilai hasil B.
-  """
   B = []
   for i in range(dimensi1):
     value = float(input(f"Masukkan hasil B[{i+1}]: "))
     B.append(value)
   return np.array(B)
 
+
 def get_coefficient_matrix(dimension):
-    """
-    Fungsi untuk meminta input pengguna untuk matriks koefisien A.
-
-    Args:
-      dimension: Dimensi matriks (misalnya 3, 4).
-
-    Returns:
-      Matriks NumPy yang berisi nilai-nilai koefisien A.
-    """
+  
     A = []
     for i in range(dimension):
         row = []
@@ -54,32 +33,18 @@ def get_coefficient_matrix(dimension):
         A.append(row)
     return np.array(A)
 
+
 def get_result_vector(dimension):
-    """
-    Fungsi untuk meminta input pengguna untuk vektor hasil B.
 
-    Args:
-      dimension: Dimensi vektor (misalnya 3, 4).
-
-    Returns:
-      Vektor NumPy yang berisi nilai-nilai hasil B.
-    """
     B = []
     for i in range(dimension):
         value = float(input(f"Masukkan hasil B[{i+1}]: "))
         B.append(value)
     return np.array(B)
 
+
 def lu_decomposition(A):
-    """
-    Fungsi untuk melakukan dekomposisi LU pada matriks A.
 
-    Args:
-      A: Matriks koefisien (NumPy array).
-
-    Returns:
-      Tuple dari matriks L dan U.
-    """
     n = A.shape[0]
     L = np.eye(n)
     U = A.copy()
@@ -89,16 +54,9 @@ def lu_decomposition(A):
             U[j, :] -= L[j, i] * U[i, :]
     return L, U
 
+
 def crout_decomposition(A):
-    """
-    Fungsi untuk melakukan dekomposisi Crout pada matriks A.
 
-    Args:
-      A: Matriks koefisien (NumPy array).
-
-    Returns:
-      Tuple dari matriks L dan U.
-    """
     n = len(A)
     L = np.zeros((n, n))
     U = np.zeros((n, n))
@@ -114,17 +72,9 @@ def crout_decomposition(A):
 
     return L, U
 
+
 def solve_system_matriks(A, B):
-  """
-  Fungsi untuk menghitung solusi sistem persamaan linier.
 
-  Args:
-    A: Matriks koefisien (NumPy array).
-    B: Vektor hasil (NumPy array).
-
-  Returns:
-    Vektor solusi (NumPy array) jika ada, None jika tidak ada solusi.
-  """
   try:
     A_inv = np.linalg.inv(A)
   except np.linalg.LinAlgError:
@@ -134,17 +84,9 @@ def solve_system_matriks(A, B):
   s = np.dot(A_inv, B)
   return s
 
+
 def solve_system(A, B):
-    """
-    Fungsi untuk menghitung solusi sistem persamaan linier menggunakan dekomposisi LU.
 
-    Args:
-      A: Matriks koefisien (NumPy array).
-      B: Vektor hasil (NumPy array).
-
-    Returns:
-      Vektor solusi (NumPy array) jika ada, None jika tidak ada solusi.
-    """
     L, U = lu_decomposition(A)
     y = np.zeros_like(B)
     for i in range(len(B)):
@@ -160,17 +102,9 @@ def solve_system(A, B):
         x[i] = (y[i] - sum) / U[i, i]
     return x
 
+
 def solve_with_crout(A, b):
-    """
-    Fungsi untuk mencari solusi sistem persamaan linear menggunakan dekomposisi Crout.
 
-    Args:
-      A: Matriks koefisien (NumPy array).
-      b: Vektor hasil (NumPy array).
-
-    Returns:
-      Vektor solusi (NumPy array) jika ada, None jika tidak ada solusi.
-    """
     L, U = crout_decomposition(A)
 
     # Menyelesaikan Ly = b
@@ -181,10 +115,9 @@ def solve_with_crout(A, b):
 
     return x
 
+
 def main():
-    """
-    Fungsi utama untuk menjalankan program.
-    """
+
     while True:
         print("\nMenu Pilihan:")
         print("1. Matriks Invers")
