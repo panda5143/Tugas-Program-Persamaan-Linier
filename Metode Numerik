@@ -1,0 +1,225 @@
+import numpy as np
+
+def get_matriks_A(dimensi1):
+  """
+  Fungsi untuk meminta input pengguna untuk matriks koefisien A.
+
+  Args:
+    dimension: Dimensi matriks (misalnya 3, 4).
+
+  Returns:
+    Matriks NumPy yang berisi nilai-nilai koefisien A.
+  """
+  A = []
+  for i in range(dimensi1):
+    row = []
+    for j in range(dimensi1):
+      value = float(input(f"Masukkan koefisien A[{i+1},{j+1}]: "))
+      row.append(value)
+    A.append(row)
+  return np.array(A)
+
+def get_matriks_B(dimensi1):
+  """
+  Fungsi untuk meminta input pengguna untuk vektor hasil B.
+
+  Args:
+    dimension: Dimensi vektor (misalnya 3, 4).
+
+  Returns:
+    Vektor NumPy yang berisi nilai-nilai hasil B.
+  """
+  B = []
+  for i in range(dimensi1):
+    value = float(input(f"Masukkan hasil B[{i+1}]: "))
+    B.append(value)
+  return np.array(B)
+
+def get_coefficient_matrix(dimension):
+    """
+    Fungsi untuk meminta input pengguna untuk matriks koefisien A.
+
+    Args:
+      dimension: Dimensi matriks (misalnya 3, 4).
+
+    Returns:
+      Matriks NumPy yang berisi nilai-nilai koefisien A.
+    """
+    A = []
+    for i in range(dimension):
+        row = []
+        for j in range(dimension):
+            value = float(input(f"Masukkan koefisien A[{i+1},{j+1}]: "))
+            row.append(value)
+        A.append(row)
+    return np.array(A)
+
+def get_result_vector(dimension):
+    """
+    Fungsi untuk meminta input pengguna untuk vektor hasil B.
+
+    Args:
+      dimension: Dimensi vektor (misalnya 3, 4).
+
+    Returns:
+      Vektor NumPy yang berisi nilai-nilai hasil B.
+    """
+    B = []
+    for i in range(dimension):
+        value = float(input(f"Masukkan hasil B[{i+1}]: "))
+        B.append(value)
+    return np.array(B)
+
+def lu_decomposition(A):
+    """
+    Fungsi untuk melakukan dekomposisi LU pada matriks A.
+
+    Args:
+      A: Matriks koefisien (NumPy array).
+
+    Returns:
+      Tuple dari matriks L dan U.
+    """
+    n = A.shape[0]
+    L = np.eye(n)
+    U = A.copy()
+    for i in range(n):
+        for j in range(i+1, n):
+            L[j, i] = U[j, i] / U[i, i]
+            U[j, :] -= L[j, i] * U[i, :]
+    return L, U
+
+def crout_decomposition(A):
+    """
+    Fungsi untuk melakukan dekomposisi Crout pada matriks A.
+
+    Args:
+      A: Matriks koefisien (NumPy array).
+
+    Returns:
+      Tuple dari matriks L dan U.
+    """
+    n = len(A)
+    L = np.zeros((n, n))
+    U = np.zeros((n, n))
+
+    for j in range(n):
+        U[j][j] = 1
+
+        for i in range(j, n):
+            L[i][j] = A[i][j] - sum(L[i][k] * U[k][j] for k in range(i))
+
+        for i in range(j+1, n):
+            U[j][i] = (A[j][i] - sum(L[j][k] * U[k][i] for k in range(j))) / L[j][j]
+
+    return L, U
+
+def solve_system_matriks(A, B):
+  """
+  Fungsi untuk menghitung solusi sistem persamaan linier.
+
+  Args:
+    A: Matriks koefisien (NumPy array).
+    B: Vektor hasil (NumPy array).
+
+  Returns:
+    Vektor solusi (NumPy array) jika ada, None jika tidak ada solusi.
+  """
+  try:
+    A_inv = np.linalg.inv(A)
+  except np.linalg.LinAlgError:
+    print("Matriks koefisien tidak memiliki invers.")
+    return None
+  
+  s = np.dot(A_inv, B)
+  return s
+
+def solve_system(A, B):
+    """
+    Fungsi untuk menghitung solusi sistem persamaan linier menggunakan dekomposisi LU.
+
+    Args:
+      A: Matriks koefisien (NumPy array).
+      B: Vektor hasil (NumPy array).
+
+    Returns:
+      Vektor solusi (NumPy array) jika ada, None jika tidak ada solusi.
+    """
+    L, U = lu_decomposition(A)
+    y = np.zeros_like(B)
+    for i in range(len(B)):
+        sum = 0
+        for j in range(i):
+            sum += L[i, j] * y[j]
+        y[i] = B[i] - sum
+    x = np.zeros_like(B)
+    for i in range(len(B)-1, -1, -1):
+        sum = 0
+        for j in range(i+1, len(B)):
+            sum += U[i, j] * x[j]
+        x[i] = (y[i] - sum) / U[i, i]
+    return x
+
+def solve_with_crout(A, b):
+    """
+    Fungsi untuk mencari solusi sistem persamaan linear menggunakan dekomposisi Crout.
+
+    Args:
+      A: Matriks koefisien (NumPy array).
+      b: Vektor hasil (NumPy array).
+
+    Returns:
+      Vektor solusi (NumPy array) jika ada, None jika tidak ada solusi.
+    """
+    L, U = crout_decomposition(A)
+
+    # Menyelesaikan Ly = b
+    y = np.linalg.solve(L, b)
+
+    # Menyelesaikan Ux = y
+    x = np.linalg.solve(U, y)
+
+    return x
+
+def main():
+    """
+    Fungsi utama untuk menjalankan program.
+    """
+    while True:
+        print("\nMenu Pilihan:")
+        print("1. Matriks Invers")
+        print("2. Dekomposisi LU Gauss")
+        print("3. Dekomposisi Crout")
+        print("4. Keluar")
+        choice = input("Pilih opsi: ")
+
+        if choice == "1":
+            dimensi1 = int(input("Masukkan dimensi matriks (misalnya 3, 4, 5, dst): "))
+            A = get_matriks_A(dimensi1)
+            B = get_matriks_B(dimensi1)
+            solution1 = solve_system_matriks(A, B)
+            print(f"Hasil dari matriks invers {dimensi1}x{dimensi1}:")
+            print("Hasil =", solution1)
+        elif choice == "2":
+            dimension = int(input("Masukkan dimensi matriks (misalnya 3, 4, 5, dst): "))
+            A = get_coefficient_matrix(dimension)
+            B = get_result_vector(dimension)
+            solution2 = solve_system(A, B)
+            if solution2 is not None:
+                print(f"Hasil dari matriks invers {dimension}x{dimension}:")
+                print("Hasil =", solution2)
+        elif choice == "3":
+            dimension = int(input("Masukkan dimensi matriks (misalnya 3, 4, 5, dst): "))
+            A = get_coefficient_matrix(dimension)
+            B = get_result_vector(dimension)
+            solution3 = solve_with_crout(A, B)
+            if solution3 is not None:
+                print(f"Hasil dari matriks invers {dimension}x{dimension}:")
+                print("Hasil =", solution3)
+        elif choice == "4":
+            break
+        else:
+            print("Pilihan tidak valid. Silakan pilih opsi yang tersedia.")
+
+# Menjalankan program
+main()
